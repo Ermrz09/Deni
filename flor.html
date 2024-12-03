@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flor Animada con Fuegos Artificiales</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            background: #001a4d;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        canvas.stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(to top, #0b6623, green);
+        }
+
+        .stem {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            width: 15px;
+            height: 0;
+            background: linear-gradient(to top, #4caf50, #6fbf73);
+            transform: translateX(-50%);
+            animation: growStem 3s forwards ease-in-out;
+            border-radius: 10px;
+        }
+
+        .petal {
+            position: absolute;
+            background: radial-gradient(circle at center, #ff99cc, #ff6699);
+            border: 2px solid #ff6699;
+            border-radius: 50%;
+            width: 70px;
+            height: 100px;
+            transform: scale(0);
+            animation: openPetal 2s forwards ease-in-out 3s;
+        }
+
+        .petal:nth-child(1) { top: -100px; left: -35px; transform-origin: bottom center; }
+        .petal:nth-child(2) { top: -80px; left: -60px; transform-origin: center right; }
+        .petal:nth-child(3) { top: -80px; left: 10px; transform-origin: center left; }
+        .petal:nth-child(4) { top: -60px; left: -35px; transform-origin: top center; }
+
+        .center {
+            position: absolute;
+            background: radial-gradient(circle at center, yellow, gold);
+            border: 2px solid orange;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            top: -90px;
+            left: -30px;
+            transform: scale(0);
+            animation: bloomCenter 2s forwards ease-in-out 3.5s;
+        }
+
+        .leaves {
+            position: absolute;
+            background: linear-gradient(to bottom right, #4caf50, #357a38);
+            border-radius: 50%;
+            width: 40px;
+            height: 80px;
+            transform: scale(0);
+            animation: growLeaves 2s forwards ease-in-out 3s;
+        }
+
+        .leaves.left {
+            top: 50px;
+            left: -35px;
+            transform-origin: right center;
+        }
+
+        .leaves.right {
+            top: 50px;
+            left: 10px;
+            transform-origin: left center;
+        }
+
+        @keyframes growStem {
+            to { height: 250px; }
+        }
+
+        @keyframes openPetal {
+            to { transform: scale(1); }
+        }
+
+        @keyframes bloomCenter {
+            to { transform: scale(1); }
+        }
+
+        @keyframes growLeaves {
+            to { transform: scale(1); }
+        }
+
+        .fireworks {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .message {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 3rem;
+            color: yellow;
+            text-shadow: 2px 2px 4px black;
+            opacity: 0;
+            animation: showMessage 2s forwards ease-in-out 6s;
+        }
+
+        @keyframes showMessage {
+            to { opacity: 1; }
+        }
+
+        .video-container {
+            position: absolute;
+            top: 30%;
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 2s forwards ease-in-out 8s;
+        }
+
+        .video-container iframe {
+            width: 80%;
+            max-width: 600px;
+            height: 315px;
+            border: none;
+            border-radius: 10px;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="message">Sonríe Deni Watt</div>
+    <div class="video-container">
+        <iframe 
+            src="https://www.facebook.com/plugins/video.php?href=https://www.facebook.com/watch/?v=922740226393609&autoplay=1" 
+            title="Facebook video of TJ Watt"
+            allowfullscreen>
+        </iframe>
+    </div>
+    <div class="ground"></div>
+    <div class="stem">
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="center"></div>
+        <div class="leaves left"></div>
+        <div class="leaves right"></div>
+    </div>
+    <canvas class="fireworks"></canvas>
+    <canvas class="stars"></canvas>
+
+    <script>
+        const canvasStars = document.querySelector('.stars');
+        const ctxStars = canvasStars.getContext('2d');
+        canvasStars.width = window.innerWidth;
+        canvasStars.height = window.innerHeight;
+
+        function drawStars() {
+            for (let i = 0; i < 200; i++) {
+                const x = Math.random() * canvasStars.width;
+                const y = Math.random() * canvasStars.height;
+                const size = Math.random() * 2;
+                ctxStars.fillStyle = "white";
+                ctxStars.beginPath();
+                ctxStars.arc(x, y, size, 0, Math.PI * 2);
+                ctxStars.fill();
+            }
+        }
+
+        drawStars();
+
+        const canvasFireworks = document.querySelector('.fireworks');
+        const ctxFireworks = canvasFireworks.getContext('2d');
+        canvasFireworks.width = window.innerWidth;
+        canvasFireworks.height = window.innerHeight;
+
+        function createFirework(x, y) {
+            const particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x,
+                    y,
+                    radius: Math.random() * 3 + 1,
+                    color: `hsl(${Math.random() * 360}, 100%, 70%)`,
+                    dx: Math.random() * 8 - 4,
+                    dy: Math.random() * 8 - 4,
+                    alpha: 1
+                });
+            }
+            return particles;
+        }
+
+        function animateFireworks() {
+            const fireworks = [createFirework(window.innerWidth / 2, window.innerHeight / 3)];
+            setInterval(() => {
+                fireworks.push(createFirework(Math.random() * canvasFireworks.width, Math.random() * canvasFireworks.height / 2));
+            }, 1000);
+
+            function draw() {
+                ctxFireworks.clearRect(0, 0, canvasFireworks.width, canvasFireworks.height);
+                fireworks.forEach((firework, index) => {
+                    firework.forEach(particle => {
+                        ctxFireworks.globalAlpha = particle.alpha;
+                        ctxFireworks.beginPath();
+                        ctxFireworks.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                        ctxFireworks.fillStyle = particle.color;
+                        ctxFireworks.fill();
+                        particle.x += particle.dx;
+                        particle.y += particle.dy;
+                        particle.alpha -= 0.02;
+                    });
+
+                    if (firework.every(p => p.alpha <= 0)) {
+                        fireworks.splice(index, 1);
+                    }
+                });
+
+                requestAnimationFrame(draw);
+            }
+
+            draw();
+        }
+
+        animateFireworks();
+    </script>
+</body>
+</html>
